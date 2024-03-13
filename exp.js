@@ -1,10 +1,7 @@
 const { MongoClient } = require("mongodb");
 const user = "temp";
 const password = "temp";
-
-// The uri string must be the connection string for the database (obtained on Atlas).
 const mongoURI = `mongodb+srv://${user}:${password}@jwmdb.u5a8uns.mongodb.net/?retryWrites=true&w=majority&appName=jwmdb`;
-// --- This is the standard stuff to get it to work on the browser
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongodb = require('mongodb');
@@ -13,18 +10,15 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Database and Collection Names
 const dbName = 'cmps415';
 const collectionName = 'EXP-MONGO';
 
-// Connect to MongoDB
 mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(client => {
         console.log('Connected to MongoDB');
         const db = client.db(dbName);
         const collection = db.collection(collectionName);
 
-        // Default Endpoint
         app.get('/', (req, res) => {
             const authCookie = req.cookies.auth;
             if (!authCookie) {
@@ -55,7 +49,6 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
             }
         });
 
-        // Login Endpoint
         app.post('/login', (req, res) => {
             const { userID, password } = req.body;
             collection.findOne({ userID, password })
@@ -73,7 +66,6 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
                 .catch(error => console.error(error));
         });
 
-        // Register Endpoint
         app.post('/register', (req, res) => {
             const { userID, password } = req.body;
             collection.insertOne({ userID, password })
@@ -86,7 +78,6 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
                 .catch(error => console.error(error));
         });
 
-// Endpoint to view active cookies
     app.get('/cookies', (req, res) => {
       const authCookie = req.cookies.auth;
       const cookieMessage = authCookie ? `Cookie: ${authCookie}` : 'No cookies';
@@ -104,8 +95,6 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
       `);
     });
 
-
-        // Endpoint to clear cookies
         app.get('/clear-cookies', (req, res) => {
             res.clearCookie('auth');
             res.send(`
@@ -115,7 +104,6 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
             `);
         });
 
-        // Start server
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
         const port = 3000;
