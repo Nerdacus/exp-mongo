@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.3",
+    "mongodb": "^6.5.0",
+    "node": "^21.7.1"
+  }
+}
