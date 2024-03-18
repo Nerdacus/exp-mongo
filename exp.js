@@ -1,6 +1,8 @@
 const { MongoClient } = require("mongodb");
 const user = "temp";
 const password = "temp";
+
+//T1-Ref1
 const mongoURI = `mongodb+srv://${user}:${password}@jwmdb.u5a8uns.mongodb.net/?retryWrites=true&w=majority&appName=jwmdb`;
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -10,6 +12,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+//T1-Ref2
 const dbName = 'cmps415';
 const collectionName = 'EXP-MONGO';
 
@@ -22,6 +25,7 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
         app.get('/', (req, res) => {
             const authCookie = req.cookies.auth;
             if (!authCookie) {
+                //T4-Ref1
                 res.send(`
                     <h1>Login or Register</h1>
                     <form action="/login" method="post">
@@ -41,6 +45,8 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
                     <a href="/cookies">View Active Cookies</a>
                 `);
             } else {
+                //T3.2-Ref1
+                //T4-Ref2
                 res.send(`
                     <h1>Authenticated</h1>
                     <p>Authentication Cookie: ${authCookie}</p>
@@ -49,6 +55,7 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
             }
         });
 
+        //T3-Ref1
         app.post('/login', (req, res) => {
             const { userID, password } = req.body;
             collection.findOne({ userID, password })
@@ -57,6 +64,7 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
                         res.cookie('auth', 'authentication_cookie', { maxAge: 60000 }); // Expires in 1 minute
                         res.redirect('/');
                     } else {
+                        //T3.1-Ref1
                         res.send(`
                             <h2>Invalid Credentials</h2>
                             <a href="/">Back to Login</a>
@@ -66,6 +74,7 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
                 .catch(error => console.error(error));
         });
 
+        //T2-Ref1
         app.post('/register', (req, res) => {
             const { userID, password } = req.body;
             collection.insertOne({ userID, password })
@@ -78,6 +87,7 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
                 .catch(error => console.error(error));
         });
 
+    //T4-Ref4
     app.get('/cookies', (req, res) => {
       const authCookie = req.cookies.auth;
       const cookieMessage = authCookie ? `Cookie: ${authCookie}` : 'No cookies';
@@ -95,6 +105,7 @@ mongodb.MongoClient.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopolog
       `);
     });
 
+        //T5-Ref1
         app.get('/clear-cookies', (req, res) => {
             res.clearCookie('auth');
             res.send(`
